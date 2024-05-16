@@ -1,1 +1,2 @@
 scilpy
+open3d-cpu
