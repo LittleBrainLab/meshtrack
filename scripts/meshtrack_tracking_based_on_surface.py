@@ -173,7 +173,7 @@ def main():
     assert_outputs_exist(parser, args, args.out_tractogram)
 
     verify_streamline_length_options(parser, args)
-    verify_compression_th(args.compress)
+    verify_compression_th(args.compress_th)
     #verify_seed_options(parser, args)
 
     theta = gm.math.radians(get_theta(args.theta, args.algo))
