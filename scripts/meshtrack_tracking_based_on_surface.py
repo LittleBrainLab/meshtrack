@@ -60,8 +60,8 @@ from scilpy.io.utils import (add_processes_arg, add_sphere_arg,
                              assert_inputs_exist, assert_outputs_exist,
                              verify_compression_th)
 from scilpy.image.volume_space_management import DataVolume
-from scilpy.tracking.tools import get_theta
-from scilpy.tracking.utils import (add_out_options,
+from scilpy.tracking.utils import (get_theta,
+                                   add_out_options,
                                    add_tracking_options,
                                    verify_streamline_length_options)
 
