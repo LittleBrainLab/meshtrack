@@ -323,7 +323,8 @@ class ODFPropagator(PropagatorOnSphere):
                  rk_order, algo, basis, sf_threshold, sf_threshold_init,
                  theta, dipy_sphere='symmetric724',
                  min_separation_angle=np.pi / 16.,
-                 space=Space('vox'), origin=Origin('center')):
+                 space=Space('vox'), origin=Origin('center'),
+                 is_legacy=True):
         """
 
         Parameters
@@ -398,9 +399,10 @@ class ODFPropagator(PropagatorOnSphere):
         sh_order, full_basis =\
             get_sh_order_and_fullness(self.datavolume.data.shape[-1])
         self.basis = basis
+        self.is_legacy = is_legacy
         self.B = sh_to_sf_matrix(self.sphere, sh_order, self.basis,
                                  smooth=0.006, return_inv=False,
-                                 full_basis=full_basis)
+                                 full_basis=full_basis, legacy=self.is_legacy)
 
     def _get_sf(self, pos):
         """
@@ -583,7 +585,8 @@ class ODFPropagatorMesh(ODFPropagator):
                  nbr_init_norm_steps=1,
                  repulsion_force=None,
                  repulsion_weight=1.0,
-                 space=Space('voxmm'), origin=Origin('corner')):
+                 space=Space('voxmm'), origin=Origin('corner'),
+                 is_legacy=True):
         """
         Parameters
         ----------
@@ -628,7 +631,7 @@ class ODFPropagatorMesh(ODFPropagator):
 
         # Initializing using ODFPropagator
         super().__init__(dataset, step_size, rk_order, algo, basis, sf_threshold, sf_threshold_init,
-                         theta, dipy_sphere, min_separation_angle, space, origin)
+                         theta, dipy_sphere, min_separation_angle, space, origin, is_legacy)
 
         self.nbr_init_norm_steps = nbr_init_norm_steps
 

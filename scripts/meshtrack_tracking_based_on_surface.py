@@ -58,7 +58,9 @@ from dipy.io.streamline import save_tractogram, load_trk
 from scilpy.io.utils import (add_processes_arg, add_sphere_arg,
                              add_verbose_arg,
                              assert_inputs_exist, assert_outputs_exist,
-                             verify_compression_th)
+                             verify_compression_th,
+                             parse_sh_basis_arg)
+
 from scilpy.image.volume_space_management import DataVolume
 from scilpy.tracking.utils import (get_theta,
                                    add_out_options,
@@ -173,7 +175,7 @@ def main():
     assert_outputs_exist(parser, args, args.out_tractogram)
 
     verify_streamline_length_options(parser, args)
-    verify_compression_th(args.compress)
+    verify_compression_th(args.compress_th)
     #verify_seed_options(parser, args)
 
     theta = gm.math.radians(get_theta(args.theta, args.algo))
@@ -245,18 +247,21 @@ def main():
     rng_seed = args.rng_seed
     streamlines =[]
     new_seeds = []
+
+    sh_basis, is_legacy = parse_sh_basis_arg(args)
+
     for i in range(0,args.nbr_sps):
         logging.debug("Instantiating propagator.")
         from meshtrack.tracking.propagator import ODFPropagatorMesh # Hack to reinitialize randomization
-        propagator = ODFPropagatorMesh(dataset, args.step_size, args.rk_order, args.algo, args.sh_basis,
+        propagator = ODFPropagatorMesh(dataset, args.step_size, args.rk_order, args.algo, sh_basis,
                         args.sf_threshold, args.sf_threshold_init, theta, args.sphere,
                         nbr_init_norm_steps=args.nbr_init_norm_steps,
                         repulsion_force=repulsion_force_map,
-                        repulsion_weight=args.repulsion_force_weight)
+                        repulsion_weight=args.repulsion_force_weight, is_legacy=is_legacy)
 
         tracker = Tracker(propagator, mask, seed_generator, nbr_seeds, min_nbr_pts,
                       max_nbr_pts, max_invalid_dirs,
-                      compression_th=args.compress,
+                      compression_th=args.compress_th,
                       nbr_processes=args.nbr_processes,
                       save_seeds=args.save_seeds,
                       mmap_mode='r+', rng_seed=args.rng_seed,
