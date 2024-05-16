@@ -41,7 +41,7 @@ References: [1] Girard, G., Whittingstall K., Deriche, R., and
             reducing tractography biases. Neuroimage, 98, 266-278.
 """
 import argparse
-from doctest import debug_script
+
 import logging
 import math
 import time
@@ -60,21 +60,14 @@ from scilpy.io.utils import (add_processes_arg, add_sphere_arg,
                              assert_inputs_exist, assert_outputs_exist,
                              verify_compression_th)
 from scilpy.image.volume_space_management import DataVolume
-from scilpy.tracking.propagator import ODFPropagatorMesh
-from scilpy.tracking.seed import SeedGeneratorExplicit
 from scilpy.tracking.tools import get_theta
-from scilpy.tracking.tracker import Tracker
-from scilpy.tracking.utils import (add_mandatory_options_tracking,
-                                   add_out_options, add_seeding_options,
+from scilpy.tracking.utils import (add_out_options,
                                    add_tracking_options,
-                                   verify_streamline_length_options,
-                                   verify_seed_options)
+                                   verify_streamline_length_options)
 
-import numpy as np
-from numpy import asarray
-from nibabel.affines import apply_affine
-
-import open3d as o3d
+from meshtrack.tracking.propagator import ODFPropagatorMesh
+from meshtrack.tracking.seed import SeedGeneratorExplicit
+from meshtrack.tracking.tracker import Tracker
 
 def _build_arg_parser():
     p = argparse.ArgumentParser(
@@ -148,23 +141,11 @@ def _build_arg_parser():
                          default=1, dest='nbr_sps',
                          help="Number of streamlines per seed [%(default)s]")
 
-    mesh_repulsion = p.add_argument_group('Mesh based attachtion/repulsion options')
+    mesh_repulsion = p.add_argument_group('Mesh based attraction/repulsion options')
     mesh_repulsion.add_argument('--repulsion_force_map', default=None,
                         help='Force map to use for repulsion.')
     mesh_repulsion.add_argument('--repulsion_force_weight', type=float, default=0.1,
                         help='Weight of the repulsion force.')
-
-    mesh_set = p.add_argument_group('Surface Enhanced Tracking options')
-    mesh_set.add_argument('--set_mesh', default=None,
-                        help='Mesh in LPS coordinates for surface enhanced tracking.')
-    mesh_set.add_argument('--set_laplacian_smooth_iter', type=float, default=2,
-                        help='Number of iterations for the initial laplacian smoothing.')
-    mesh_set.add_argument('--set_laplacian_smooth_weight', type=float, default=10.0,
-                        help='Weight of the initial laplacian smoothing.')
-    mesh_set.add_argument('--set_stiffness_flow_iter', type=float, default=5,
-                        help='Number of iterations for the stiffness flow.')
-    mesh_set.add_argument('--set_stiffness_flow_diffusion_step', type=float, default=10.0,
-                        help='Diffusion step for the stiffness flow.')
 
 
     m_g = p.add_argument_group('Memory options')
@@ -260,19 +241,13 @@ def main():
     else:
         repulsion_force_map = None
 
-    # Calculate stiffness flow
-    if args.set_mesh is not None:
-        print('Placeholder SET not implemented yet')
-
-
-
     logging.debug("Instantiating tracker.")
     rng_seed = args.rng_seed
     streamlines =[]
     new_seeds = []
     for i in range(0,args.nbr_sps):
         logging.debug("Instantiating propagator.")
-        from scilpy.tracking.propagator import ODFPropagatorMesh
+        from meshtrack.tracking.propagator import ODFPropagatorMesh # Hack to reinitialize randomization
         propagator = ODFPropagatorMesh(dataset, args.step_size, args.rk_order, args.algo, args.sh_basis,
                         args.sf_threshold, args.sf_threshold_init, theta, args.sphere,
                         nbr_init_norm_steps=args.nbr_init_norm_steps,
