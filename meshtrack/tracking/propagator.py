@@ -639,7 +639,7 @@ class ODFPropagatorMesh(ODFPropagator):
         self.repulsion_force = repulsion_force  #precomputed repulsion force map
         self.repulsion_weight = repulsion_weight
 
-    def prepare_normal(self, norm_dir):
+    def prepare_normal(self, norm_dir, random_generator):
         """
         Prepare the normal direction for the propagation.
 
@@ -654,6 +654,7 @@ class ODFPropagatorMesh(ODFPropagator):
             Normal direction.
         """
         ind = self.sphere.find_closest(norm_dir)
+        self.line_rng_generator = random_generator
 
         return TrackingDirection(norm_dir / np.linalg.norm(norm_dir), ind)
 
