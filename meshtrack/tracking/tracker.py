@@ -409,7 +409,7 @@ class Tracker(object):
         line = [np.asarray(seeding_pos)]
         if not normal:
             # Forward
-            tracking_info = self.propagator.prepare_forward(seeding_pos)
+            tracking_info = self.propagator.prepare_forward(seeding_pos, line_generator)
             if tracking_info == PropagationStatus.ERROR:
                 # No good tracking direction can be found at seeding position.
                 return None
@@ -425,7 +425,7 @@ class Tracker(object):
             line = self._propagate_line(line, tracking_info)
         else:
             # direction is given for initial tracking direction from seed
-            tracking_info = self.propagator.prepare_normal(normal)
+            tracking_info = self.propagator.prepare_normal(normal, line_generator)
             line = self._propagate_line(line, tracking_info)
 
         # Clean streamline
