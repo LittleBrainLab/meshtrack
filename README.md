@@ -1,6 +1,6 @@
 ## meshtrack
 
-**`meshtrack`** is a Python package designed for diffusion MRI tractography guided by the geometry of a 3D mesh. It provides tools for seed generation, tracking, and filtering of tractograms based on mesh surfaces. With a focus on usability and flexibility, `meshtrack` helps researchers leverage surface-based geometry to enhance tractography analysis.
+**`meshtrack`** is a Python package designed for diffusion MRI tractography guided by the geometry of a 3D mesh. It provides tools for seed generation, tracking, and filtering of tractograms based on mesh surfaces. With a focus on usability and flexibility, `meshtrack` helps researchers leverage surface-based geometry to enhance tractography analysis. Note this repository was designed for work the analysis performed in Little et al., HBM 2025 and the functionality will eventually be incorporated into scilpy (https://github.com/scilus/scilpy) when surfaces/meshes are fully supported.
 
 ### Features
 
